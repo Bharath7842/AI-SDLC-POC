@@ -27,6 +27,14 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             return;
         }
 
+        // CORS preflight requests never carry custom headers (browsers strip
+        // them per the Fetch spec) — let OPTIONS through so the CORS filter
+        // can answer it; the real request that follows still needs the key.
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String providedApiKey = request.getHeader("X-API-Key");
 
         if (providedApiKey == null || providedApiKey.isBlank()) {
