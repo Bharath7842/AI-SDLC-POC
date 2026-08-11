@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { PortRequestComponent } from './port-request.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
+  imports: [PortRequestComponent],
+  template: `
+    <app-port-request></app-port-request>
+  `,
   styleUrl: './app.css'
 })
 export class App {
