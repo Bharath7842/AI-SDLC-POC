@@ -4,6 +4,8 @@ import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +18,11 @@ public class RabbitMqConfig {
     public static final String PORT_REQUEST_ACCEPTED_QUEUE = "port.request.accepted";
     public static final String PORT_REQUEST_ACCEPTED_ROUTING_KEY = "port.request.accepted";
     public static final String PORT_DLX = "port-dlx";
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        return new JacksonJsonMessageConverter();
+    }
 
     @Bean
     public DirectExchange portExchange() {
