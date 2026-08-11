@@ -1,0 +1,10 @@
+# Local profile. Defaults assume running the jar directly on the host
+# against the Docker Compose stack's host-mapped ports; the
+# containerized service overrides these via its `environment:` block
+# in /infra/docker-compose.yml to use in-network service DNS instead.
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}

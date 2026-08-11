@@ -1,0 +1,8 @@
+# Cloud profile — Kubernetes DNS hostnames (see /infra/k8s/configmap.yaml
+# and secret.yaml, which supply these as pod environment variables).
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq.default.svc.cluster.local}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:TODO}

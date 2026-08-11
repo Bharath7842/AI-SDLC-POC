@@ -1,0 +1,49 @@
+# Plain Kubernetes Deployment for the Donor Service, included for
+# completeness/reference. The kind cluster verification for this repo
+# deploys Donor via the Knative Service in ../knative/ instead (to
+# demonstrate scale-to-zero) — this file is not applied in that flow.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: donor-service
+  namespace: port-poc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: donor-service
+  template:
+    metadata:
+      labels:
+        app: donor-service
+    spec:
+      containers:
+        - name: donor-service
+          image: port-poc-donor-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: port-poc-config
+            - secretRef:
+                name: port-poc-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081
+            initialDelaySeconds: 20
+            periodSeconds: 10

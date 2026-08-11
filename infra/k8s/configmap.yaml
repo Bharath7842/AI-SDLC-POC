@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: port-poc-config
+  namespace: port-poc
+data:
+  SPRING_PROFILES_ACTIVE: "cloud"
+  MYSQL_HOST: "mysql.port-poc.svc.cluster.local"
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: "port_requests"
+  RABBITMQ_HOST: "rabbitmq.port-poc.svc.cluster.local"
+  RABBITMQ_PORT: "5672"
+  MINIO_HOST: "minio.port-poc.svc.cluster.local"
+  MINIO_PORT: "9000"

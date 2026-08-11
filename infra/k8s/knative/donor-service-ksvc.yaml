@@ -1,0 +1,39 @@
+# Knative Service for Donor — demonstrates scale-to-zero. Donor is
+# stateless (receive, auto-accept, publish) with no persistent
+# connections it needs to keep warm, making it the natural fit for this
+# among the three components. Replaces the plain
+# ../donor-service/deployment.yaml + service.yaml when deployed this way.
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: donor-service
+  namespace: port-poc
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "0"
+        autoscaling.knative.dev/max-scale: "5"
+    spec:
+      containers:
+        # dev.local/ prefix: Knative resolves tags to digests via a
+        # registry call by default, even for images already loaded into
+        # the cluster (kind load docker-image). "dev.local" is on
+        # knative-serving's config-deployment
+        # registries-skipping-tag-resolving list, which skips that
+        # lookup for local-only images. A real registry-pushed image
+        # (see /infra/scripts/push-images.sh) would use its real
+        # registry prefix and needs no such workaround.
+        - image: dev.local/port-poc-donor-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: port-poc-config
+            - secretRef:
+                name: port-poc-secrets
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8081

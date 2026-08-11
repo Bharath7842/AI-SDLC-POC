@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+
+# Maven / Java
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+.env.cloud

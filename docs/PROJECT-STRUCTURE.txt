@@ -1,0 +1,194 @@
+Port-In/Port-Out Portability POC - Complete Project Structure
+==============================================================
+
+root/
+│
+├── 📋 PHASE 1-5: PLANNING & ARCHITECTURE
+│   ├── project-concept.md (3.2K)
+│   │   └── Elevator pitch, problem statement, core actors, success criteria, scope
+│   │
+│   ├── vision-statement.md (2.4K)
+│   │   └── Purpose, target users, value proposition, key features
+│   │
+│   ├── core-requirements.md (1.8K)
+│   │   ├── Functional Requirements (REQ-FR-SUB, REQ-FR-DON, REQ-FR-ORC, REQ-FR-DASH, REQ-FR-REC, REQ-FR-DEP)
+│   │   └── Out of Scope (auth, manual review, multi-tenancy, billing, etc.)
+│   │
+│   ├── technology-stack.md (3.6K)
+│   │   ├── Angular 22.1.0 (Node.js ^22.12.0, TypeScript ^6.0.0)
+│   │   ├── Spring Boot 4.1.0 (Java 25 LTS, Spring Framework 7.0.8)
+│   │   ├── RabbitMQ 4.3.4 (Erlang/OTP 27.0+)
+│   │   ├── n8n 2.33.7
+│   │   ├── MySQL 8.4.10 LTS
+│   │   ├── MinIO RELEASE.2025-10-15T17-29-55Z (last OSS release)
+│   │   ├── Docker Compose v5.3.1
+│   │   ├── Kubernetes v1.36.3
+│   │   ├── Knative 1.23
+│   │   └── Compatibility Matrix
+│   │
+│   ├── architecture-documentation.md (4.3K)
+│   │   ├── Architecture Overview (static system view)
+│   │   ├── Core Layers
+│   │   │   ├── Domain Layer (entities, interfaces, no framework imports)
+│   │   │   ├── Application Layer (use cases, services)
+│   │   │   └── Infrastructure Layer (adapters, persistence, messaging, storage)
+│   │   ├── Cross-cutting Concerns
+│   │   │   ├── Error Handling (no retry, log failures)
+│   │   │   ├── Logging (structured, correlation IDs)
+│   │   │   ├── Security (deliberately none for POC)
+│   │   │   └── Configuration (env-var driven, local/cloud profiles)
+│   │   ├── Integration Patterns
+│   │   │   ├── Recipient ← RabbitMQ → Donor
+│   │   │   ├── Donor → n8n → Recipient (callback)
+│   │   │   ├── MySQL persistence (Recipient only)
+│   │   │   └── MinIO receipt storage (Recipient only)
+│   │   └── Interface Contracts (API endpoints, message formats)
+│   │
+│   └── sprint-1-plan.md (6.3K)
+│       ├── Wave 1 (Kickoff): DEV-01, QA-01
+│       ├── Wave 2 (Scaffolds): DEV-02/03/04, OPS-01, QA-02
+│       ├── Wave 3 (Domain Layer): DEV-05/06, OPS-02/03/05
+│       ├── Wave 4 (Adapters): DEV-07/09/10, OPS-04
+│       ├── Wave 5 (Cross-Service): DEV-08, OPS-06, QA-03
+│       ├── Wave 6 (App Layer): DEV-11/12/13, OPS-07/08, QA-02-execute
+│       └── Wave 7 (Acceptance): QA-04, QA-05, OPS-09
+│
+├── 🎯 SPRINT 1: EXECUTION & STORIES
+│   ├── sprint-1-stories.md (16K) [OLD FORMAT - use epics-stories instead]
+│   │   └── 24 stories (Dev/QA/DevOps) with acceptance criteria
+│   │
+│   ├── sprint-1-epics-stories.md (62K) ✅ DEFINITIVE SPRINT SPEC
+│   │   ├── 6 EPICS
+│   │   │   ├── DEV-E1: Project Infrastructure & Scaffolding (4 stories, 18 pts)
+│   │   │   │   ├── DEV-S1: Initialize Monorepo (3 pts) [WAVE 1]
+│   │   │   │   ├── DEV-S2: Scaffold Angular UI (5 pts) [WAVE 2]
+│   │   │   │   ├── DEV-S3: Scaffold Recipient Service (5 pts) [WAVE 2]
+│   │   │   │   └── DEV-S4: Scaffold Donor Service (5 pts) [WAVE 2]
+│   │   │   │
+│   │   │   ├── DEV-E2: Domain Layer & Integration Adapters (6 stories, 28 pts)
+│   │   │   │   ├── DEV-S5: PortRequest Entity (5 pts) [WAVE 3]
+│   │   │   │   ├── DEV-S6: PortRequest Model Donor (3 pts) [WAVE 3]
+│   │   │   │   ├── DEV-S7: RabbitMQ Producer (5 pts) [WAVE 4]
+│   │   │   │   ├── DEV-S8: RabbitMQ Consumer/Producer Donor (6 pts) [WAVE 5]
+│   │   │   │   ├── DEV-S9: MySQL Persistence (5 pts) [WAVE 4]
+│   │   │   │   └── DEV-S10: MinIO Storage (4 pts) [WAVE 4]
+│   │   │   │
+│   │   │   ├── DEV-E3: REST API & Application Layer (3 stories, 17 pts)
+│   │   │   │   ├── DEV-S11: REST API Endpoints (6 pts) [WAVE 6]
+│   │   │   │   ├── DEV-S12: Angular UI Form & Dashboard (6 pts) [WAVE 6]
+│   │   │   │   └── DEV-S13: n8n Workflow (5 pts) [WAVE 6]
+│   │   │   │
+│   │   │   ├── QA-E1: Test Planning & Automation Framework (5 stories, 27 pts)
+│   │   │   │   ├── QA-S1: Test Plan (5 pts) [WAVE 1] 🤖
+│   │   │   │   ├── QA-S2: REST API Tests - Robot Framework (6 pts) [WAVE 2] 🤖
+│   │   │   │   ├── QA-S3: RabbitMQ Messaging Tests (6 pts) [WAVE 5] 🤖
+│   │   │   │   ├── QA-S4: End-to-End Smoke Test (7 pts) [WAVE 7] 🤖
+│   │   │   │   └── QA-S5: CI/CD Integration (5 pts) [WAVE 7] 🤖
+│   │   │   │
+│   │   │   ├── OPS-E1: Cloud-Agnostic Infrastructure & Containerization (7 stories, 39 pts)
+│   │   │   │   ├── OPS-S1: Docker Compose Stack (5 pts) [WAVE 2] ☁️
+│   │   │   │   ├── OPS-S2: Dockerfiles (6 pts) [WAVE 3] ☁️
+│   │   │   │   ├── OPS-S3: Cloud-Agnostic Config (5 pts) [WAVE 3] ☁️
+│   │   │   │   ├── OPS-S4: Connectivity Verification (4 pts) [WAVE 4] ☁️
+│   │   │   │   ├── OPS-S5: CI/CD Pipeline (6 pts) [WAVE 3] ☁️
+│   │   │   │   ├── OPS-S6: Registry Push (5 pts) [WAVE 5] ☁️
+│   │   │   │   └── OPS-S7: Kubernetes/Knative Manifests (7 pts) [WAVE 6] ☁️
+│   │   │   │
+│   │   │   └── OPS-E2: Observability & Operational Readiness (2 stories, 9 pts)
+│   │   │       ├── OPS-S8: Structured Logging (5 pts) [WAVE 6] 📊
+│   │   │       └── OPS-S9: Operational Runbook (4 pts) [WAVE 7] 📊
+│   │   │
+│   │   └── SUMMARY: 6 Epics | 27 Stories | 139 Story Points
+│   │       ├── Dev: 3 Epics, 13 Stories, 63 pts
+│   │       ├── QA: 1 Epic, 5 Stories, 27 pts (with Robot Framework automation 🤖)
+│   │       └── DevOps: 2 Epics, 9 Stories, 49 pts (cloud-agnostic ☁️)
+│   │
+│   └── SPRINT-1-USAGE-GUIDE.md (14K)
+│       ├── Jira Import (3 methods: CSV, manual, API)
+│       ├── Wave-Based Sprint Planning (7 waves, 5-6 week duration)
+│       ├── Role-Based Task Assignment
+│       │   ├── Developer: 13 stories, 63 points
+│       │   ├── QA Engineer: 5 stories, 27 points
+│       │   └── DevOps Engineer: 9 stories, 49 points
+│       ├── Sprint Execution Checklist
+│       ├── Acceptance Criteria Verification
+│       ├── Performance Metrics (velocity, cycle time, burndown)
+│       ├── Troubleshooting Common Issues
+│       └── Post-Sprint Demo & Handoff
+│
+├── 📊 SUPPORTING FILES
+│   ├── sprint-1-jira-import.csv (8K)
+│   │   └── Bulk import CSV for all 27 stories (ready for Jira)
+│   │
+│   ├── package.json (locked versions, generated)
+│   │   └── Angular dependencies
+│   │
+│   ├── pom.xml (locked versions, generated)
+│   │   └── Spring Boot template (Recipient/Donor)
+│   │
+│   └── docker-compose.yml (locked versions, generated)
+│       ├── RabbitMQ 4.3.4
+│       ├── MySQL 8.4.10
+│       ├── MinIO RELEASE.2025-10-15T17-29-55Z
+│       └── n8n 2.33.7
+│
+└── 🎯 JIRA STATUS (As of August 11, 2026)
+    ├── ✅ 6 EPICS CREATED
+    │   ├── KAN-4: DEV-E1 (Project Infrastructure & Scaffolding)
+    │   ├── KAN-5: DEV-E2 (Domain Layer & Integration Adapters)
+    │   ├── KAN-6: DEV-E3 (REST API & Application Layer)
+    │   ├── KAN-7: QA-E1 (Test Planning & Automation Framework)
+    │   ├── KAN-8: OPS-E1 (Cloud-Agnostic Infrastructure)
+    │   └── KAN-9: OPS-E2 (Observability & Operational Readiness)
+    │
+    └── 📋 27 STORIES READY TO IMPORT
+        └── Use sprint-1-jira-import.csv for bulk Jira import
+
+
+KEY HIGHLIGHTS
+==============
+
+✅ QA: Robot Framework Automation
+   - Test plan mapping to 6 POC success criteria
+   - Automated REST API tests
+   - RabbitMQ messaging test harness
+   - End-to-end smoke test suite
+   - CI/CD pipeline integration
+
+✅ DevOps: Cloud-Agnostic Architecture
+   - Local Docker Compose for development
+   - Production-ready Dockerfiles (multi-stage)
+   - Environment-variable configuration (no hardcoded paths)
+   - CI/CD pipeline (build + test + deploy)
+   - **Kubernetes/Knative manifests work on AWS/Azure/GCP/on-prem**
+   - Structured logging with correlation IDs
+   - Operational runbook for troubleshooting
+
+✅ Dev: Layered Architecture
+   - Framework-free domain layer (no JPA, Spring in entities)
+   - Adapter pattern (messaging, persistence, storage)
+   - REST API matching interface contracts
+   - Angular UI with polling dashboard
+   - n8n orchestration workflow (no custom code)
+
+
+SPRINT VELOCITY ESTIMATE
+========================
+
+Small Team (1-2 per role):     15-20 pts/week  →  7-9 weeks
+Medium Team (2-3 per role):    25-30 pts/week  →  5-6 weeks
+Large Team (3+ per role):      35-50 pts/week  →  3-4 weeks
+
+Recommended: 6 weeks with parallel waves and cross-role coordination
+
+
+DEPLOYMENT TARGETS
+==================
+
+✅ Local: Docker Compose (same images, local DNS hostnames)
+✅ On-Prem: Kubernetes + Knative (CNCF-conformant clusters)
+✅ AWS: EKS with managed services
+✅ Azure: AKS with managed services
+✅ GCP: GKE with managed services
+
+Same container images, same manifests, different environment configs only.

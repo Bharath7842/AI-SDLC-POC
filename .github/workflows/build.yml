@@ -1,0 +1,60 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  recipient-service:
+    name: Recipient Service (build + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build and test
+        working-directory: recipient-service
+        run: |
+          chmod +x mvnw
+          ./mvnw -B clean test
+
+  donor-service:
+    name: Donor Service (build + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build and test
+        working-directory: donor-service
+        run: |
+          chmod +x mvnw
+          ./mvnw -B clean test
+
+  ui:
+    name: Angular UI (build + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Install dependencies
+        working-directory: ui
+        run: npm ci
+      - name: Build
+        working-directory: ui
+        run: npx ng build
+      - name: Test
+        working-directory: ui
+        run: npx ng test --watch=false --browsers=ChromeHeadless
